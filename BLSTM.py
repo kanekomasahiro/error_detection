@@ -12,11 +12,19 @@ import generators as gens
 import random
 import time
 
+"""
+モデルの学習の実行：python BLSTM.py train
+モデルのテストの実行：python BLSTM.py test
+Word2Vecのモデルを http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/ からダウンロードする必要あり
+"""
+
+
 train_txt = "train.txt"
 test_txt = "te.txt"
 vocab_dict = "w2vmodel/BLSTMw2vVocab.pkl"
 load_model = "w2vmodel/BLSTMw2v.model"  #学習：保存モデル名　テスト：読み込みモデル名
 state_model = "w2vmodel/BLSTMw2v.sta"  #学習モデルの状態を保存する
+word2vec_model_name = './entity_vector/entity_vector.model.bin'  #Word2Vecのモデル名
 
 
 vocab_size = take_len(train_txt)
@@ -152,7 +160,7 @@ def train():
     id2word[-1] = "EOS"
     word2id["EOS"] = -1
     word2id, id2word, word_list, word_freq = make_dict(train_txt, word2id, id2word, word_freq)
-    word2vec_model = gensim.models.Word2Vec.load_word2vec_format('./entity_vector/entity_vector.model.bin', binary=True)
+    word2vec_model = gensim.models.Word2Vec.load_word2vec_format(word2vec_model_name, binary=True)
     model = BLSTMw2v(vocab_size, embed_size, hidden_size, output_size)
     model.initialize_embed(word2vec_model, word_list, word2id)
     if gpu >= 0:
