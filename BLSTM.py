@@ -20,7 +20,7 @@ Word2Vecのモデルを http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/
 
 
 train_txt = "train.txt"
-test_txt = "te.txt"
+test_txt = "dev.txt"
 vocab_dict = "w2vmodel/BLSTMw2vVocab.pkl"
 load_model = "w2vmodel/BLSTMw2v.model"  #学習：保存モデル名　テスト：読み込みモデル名
 state_model = "w2vmodel/BLSTMw2v.sta"  #学習モデルの状態を保存する
