@@ -21,9 +21,9 @@ Word2Vecのモデルを http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/
 
 train_txt = "train.txt"
 test_txt = "dev.txt"
-vocab_dict = "w2vmodel/BLSTMw2vVocab.pkl"
-load_model = "w2vmodel/BLSTMw2v.model"  #学習：保存モデル名　テスト：読み込みモデル名
-state_model = "w2vmodel/BLSTMw2v.sta"  #学習モデルの状態を保存する
+vocab_dict = "BLSTMw2vVocab.pkl"
+load_model = "BLSTM.model"  #学習：保存モデル名　テスト：読み込みモデル名
+state_model = "BLSTM.sta"  #学習モデルの状態を保存する
 word2vec_model_name = './entity_vector/entity_vector.model.bin'  #Word2Vecのモデル名
 
 
