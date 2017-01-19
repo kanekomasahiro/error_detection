@@ -129,13 +129,13 @@ class BLSTMw2v(Chain):
 def forward(batchs, tags, model, word2id, mode):
 
     if mode:
-        accum_loss = Variable(xp.zeros((),dtype=xp.float32))
+        loss = Variable(xp.zeros((),dtype=xp.float32))
         x = Variable(xp.array([[word2id[word] if word in word2id else word2id['<unk>'] for word in sen] for sen in batchs], dtype=xp.int32).T)
         pre = model(x)
         tags = Variable(xp.array(tags, dtype=xp.int32).T)
-        accum_loss += F.softmax_cross_entropy(pre, tags)
+        loss += F.softmax_cross_entropy(pre, tags)
         sortmax_pres = F.softmax(pre)
-        return accum_loss, sortmax_pres
+        return loss, sortmax_pres
 
     else:
         x = Variable(xp.array([[word2id[word] if word in word2id else word2id["<unk>"] for word in sen] for sen in batchs], dtype=xp.int32).T)
