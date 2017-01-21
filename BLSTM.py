@@ -18,13 +18,11 @@ import time
 Word2Vecのモデルを http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/ からダウンロードする必要あり
 """
 
-
 train_txt = "train.txt"
 test_txt = "dev.txt"
 vocab_dict = "BLSTMw2vVocab.pkl"
 load_model = "BLSTM.model"  #学習：保存モデル名　テスト：読み込みモデル名
 state_model = "BLSTM.sta"  #学習モデルの状態を保存する
-word2vec_model_name = './entity_vector/entity_vector.model.bin'  #Word2Vecのモデル名
 
 
 vocab_size = take_len(train_txt)
@@ -34,7 +32,7 @@ output_size = 2
 hidden_size = 200
 extra_hidden_size = 50
 epoch = 15
-gpu = 0 #CPU:0 GPU:GPU番号
+gpu = 1 #CPU:0 GPU:GPU番号
 
 xp = cuda.cupy if gpu >= 0 else np
 if gpu >= 0:
@@ -160,7 +158,7 @@ def train():
     id2word[-1] = "EOS"
     word2id["EOS"] = -1
     word2id, id2word, word_list, word_freq = make_dict(train_txt, word2id, id2word, word_freq)
-    word2vec_model = gensim.models.Word2Vec.load_word2vec_format(word2vec_model_name, binary=True)
+    word2vec_model = gensim.models.Word2Vec.load_word2vec_format('./entity_vector/entity_vector.model.bin', binary=True)
     model = BLSTMw2v(vocab_size, embed_size, hidden_size, output_size)
     model.initialize_embed(word2vec_model, word_list, word2id)
     if gpu >= 0:
@@ -168,16 +166,15 @@ def train():
         model.to_gpu()
     opt = O.Adam()
     opt.setup(model)
-
+    gen1 = gens.word_list(train_txt)
+    gen2 = gens.batch(gens.sorted_parallel(gen1, embed_size*batch_size), batch_size)
+    batchs = [b for b in gen2]
+    bl = list(range(len(batchs)))
+    random.shuffle(bl)
     for i in range(epoch):
         print("epoch{}".format(i+1))
         start = time.time()
         total_loss = 0
-        gen1 = gens.word_list(train_txt)
-        gen2 = gens.batch(gens.sorted_parallel(gen1, embed_size*batch_size), batch_size)
-        batchs = [b for b in gen2]
-        bl = list(range(len(batchs)))
-        random.shuffle(bl)
         for n, j in enumerate(bl):
             tag0 = batchs[j][:]
             tags = [a[0] for a in tag0]
@@ -224,12 +221,7 @@ def test():
         correct_p += b
         c_r += c
         correct_r += d
-    precision = correct_p/c_p
-    recall = correct_r/c_r
-    f_measure = 2*precision*recall/(precision + recall)
-    print('Precision:\t{}'.format(precision))
-    print('Recall:\t{}'.format(recall))
-    print('F-value\t{}'.format(f_measure))
+    evaluate(model, word2id)
 
 def main():
     if len(sys.argv) != 2:
