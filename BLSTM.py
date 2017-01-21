@@ -34,7 +34,7 @@ output_size = 2
 hidden_size = 200
 extra_hidden_size = 50
 epoch = 15
-gpu = 1
+gpu = 0 #CPU:0 GPU:GPU番号
 
 xp = cuda.cupy if gpu >= 0 else np
 if gpu >= 0:
