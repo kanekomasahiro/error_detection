@@ -110,8 +110,8 @@ class BLSTMw2v(Chain):
         for e, h_back in zip(e_states, h_back_states):
             h_for = self.e2h_for(e)
             h_state = F.concat((h_for, h_back))
-        o_state = self.s2o(F.tanh(self.h2s(h_state)))
-        return o_state
+        pre = self.s2o(F.tanh(self.h2s(h_state)))
+        return pre
 
     def _reset_state(self):
         self.zerograds()
