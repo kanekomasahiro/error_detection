@@ -2,7 +2,7 @@
 Bi-LSTMを使い日本語文の誤り検出を行う。
 
 ```
-python Bi-LSTM.py train # モデルを学習し、コード内で指定したディレクトリにモデルを保存
+python BLSTM.py train # モデルを学習し、コード内で指定したディレクトリにモデルを保存
 ```
 
 入力：
@@ -20,5 +20,5 @@ Precision,Recall,F-value,Accuracyが出力される。
 
 
 ```
-python Bi-LSTM.py test # モデルをテストする
+python BLSTM.py test # モデルをテストする
 ```
