@@ -73,18 +73,18 @@ def evaluate(model, word2id):
     batchs = [b for b in gen2]
     for batch in batchs:
         tag0 = batch[:]
-        tags = [a[0]  for a in tag0]
-        batch = [b[1:] for b in batch]
-        batch = fill_batch([b[-1].split() for b in batch])
+        tags = [int(a[0][0])  for a in tag0]
+        batch = [b[0][1:] for b in batch]
+        batch = fill_batch([b.split() for b in batch])
         pres = forward(batch, tags, m, word2id, mode = False)
         a, b, c, d =  precision_recall_f(pres, tags)
         c_p += a
         correct_p += b
         c_r += c
         correct_r += d
-    precision = correct_p/c_p
-    recall = correct_r/c_r
-    f_measure = (2*precision*recall)/(precision + recall)
+    precision = correct_p/c_p if correct_p != 0 else 0
+    recall = correct_r/c_r if correct_r != 0 else 0
+    f_measure = (2*precision*recall)/(precision + recall) if precision != 0 and recall != 0 else 0
     print('Precision:\t{}'.format(precision))
     print('Recall:\t{}'.format(recall))
     print('F-value\t{}'.format(f_measure))
@@ -158,9 +158,9 @@ def train():
     id2word[-1] = "EOS"
     word2id["EOS"] = -1
     word2id, id2word, word_list, word_freq = make_dict(train_txt, word2id, id2word, word_freq)
-    word2vec_model = gensim.models.Word2Vec.load_word2vec_format('./entity_vector/entity_vector.model.bin', binary=True)
+    #word2vec_model = gensim.models.Word2Vec.load_word2vec_format('./entity_vector/entity_vector.model.bin', binary=True)
     model = BLSTMw2v(vocab_size, embed_size, hidden_size, output_size)
-    model.initialize_embed(word2vec_model, word_list, word2id)
+    #model.initialize_embed(word2vec_model, word_list, word2id)
     if gpu >= 0:
         cuda.get_device(gpu).use()
         model.to_gpu()
@@ -177,7 +177,7 @@ def train():
         total_loss = 0
         for n, j in enumerate(bl):
             tag0 = batchs[j][:]
-            tags = [a[0] for a in tag0]
+            tags = [int(a[0][0]) for a in tag0]
             batch = fill_batch([b[-1].split() for b in batchs[j]])
             accum_loss, pres = forward(batch, tags, model, word2id, mode = True) # 損失の計算
             accum_loss.backward() # 誤差逆伝播
