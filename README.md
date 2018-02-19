@@ -1,5 +1,5 @@
 # error_detection
-Bi-LSTMを使い日本語文の誤り検出を行う。
+Bi-LSTMを使い日本語の文単位の誤り検出を行う。
 
 ```
 python BLSTM.py train # モデルを学習し、コード内で指定したディレクトリにモデルを保存
